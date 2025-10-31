@@ -1,0 +1,76 @@
+<template>
+    <lightning-card title="Account Transactions" icon-name="standard:account">
+        <div class="slds-p-around_medium">
+            
+            <!-- Account Number Input -->
+            <div class="slds-form-element">
+                <label class="slds-form-element__label" for="account-number">
+                    Account Number
+                </label>
+                <div class="slds-form-element__control">
+                    <input 
+                        id="account-number"
+                        type="text" 
+                        class={inputClass}
+                        placeholder="Enter account number"
+                        value={accountNumber}
+                        onchange={handleAccountNumberChange}
+                        onblur={validateAccountNumber}
+                    />
+                </div>
+                <template if:true={hasError}>
+                    <div class="slds-form-element__help error-message">
+                        {errorMessage}
+                    </div>
+                </template>
+            </div>
+
+            <!-- Currency Selector -->
+            <div class="slds-form-element slds-m-top_small">
+                <label class="slds-form-element__label" for="currency-select">
+                    Account Currency
+                </label>
+                <div class="slds-form-element__control">
+                    <lightning-combobox
+                        name="currency"
+                        placeholder="Select Currency"
+                        value={accountCurrency}
+                        options={currencyOptions}
+                        onchange={handleCurrencyChange}
+                    ></lightning-combobox>
+                </div>
+            </div>
+
+            <!-- Load Button -->
+            <div class="slds-m-top_medium">
+                <lightning-button 
+                    variant="brand" 
+                    label="Load Transactions" 
+                    onclick={loadTransactions}
+                    disabled={isLoadDisabled}
+                ></lightning-button>
+            </div>
+
+            <!-- Loading Spinner -->
+            <template if:true={isLoading}>
+                <div class="slds-m-top_medium">
+                    <lightning-spinner alternative-text="Loading transactions..." size="small"></lightning-spinner>
+                </div>
+            </template>
+
+            <!-- Transactions Table -->
+            <template if:true={showTable}>
+                <div class="slds-m-top_medium">
+                    <lightning-datatable
+                        key-field="transactionId"
+                        data={transactions}
+                        columns={columns}
+                        hide-checkbox-column
+                    ></lightning-datatable>
+                </div>
+            </template>
+
+        </div>
+    </lightning-card>
+</template>
+

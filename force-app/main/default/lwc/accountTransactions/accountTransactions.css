@@ -1,0 +1,16 @@
+/* Error input styling with red border */
+.error-input {
+    border: 2px solid #c23934 !important;
+    border-radius: 0.25rem;
+}
+
+.error-input:focus {
+    border-color: #c23934 !important;
+    box-shadow: 0 0 3px #c23934 !important;
+}
+
+.error-message {
+    color: #c23934;
+    font-size: 0.875rem;
+}
+
