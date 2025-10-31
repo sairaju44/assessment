@@ -27,10 +27,8 @@ force-app/main/default/
 
 ✅ **Automated KYC Verification** - Triggers on status change  
 ✅ **Enterprise Trigger Framework** - Scalable, reusable, best practices  
-✅ **Security-First Design** - Field-level security, data masking  
 ✅ **Async Processing** - @future method for non-blocking callouts  
 ✅ **Simple & Clean** - Minimal complexity, direct System.debug logging  
-✅ **100% Test Coverage** - Production-ready with all tests passing  
 ✅ **Bulk Operation Support** - Handles multiple records efficiently  
 
 ## 🚀 Quick Start
