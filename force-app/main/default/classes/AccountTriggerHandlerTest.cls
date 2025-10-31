@@ -7,8 +7,12 @@ private class AccountTriggerHandlerTest {
     
     @TestSetup
     static void setup() {
+        Id personAccountRecordTypeId = Schema.SObjectType.Account.getRecordTypeInfosByDeveloperName()
+            .get('PersonAccount').getRecordTypeId();
+        
         // Create test person account
         Account testAccount = new Account(
+            RecordTypeId = personAccountRecordTypeId,
             FirstName = 'John',
             LastName = 'Doe',
             PersonEmail = 'john.doe@example.com',
@@ -85,10 +89,14 @@ private class AccountTriggerHandlerTest {
     
     @IsTest
     static void testBulkStatusChange() {
+        Id personAccountRecordTypeId = Schema.SObjectType.Account.getRecordTypeInfosByDeveloperName()
+            .get('PersonAccount').getRecordTypeId();
+        
         // Create multiple accounts
         List<Account> accounts = new List<Account>();
         for (Integer i = 0; i < 5; i++) {
             accounts.add(new Account(
+                RecordTypeId = personAccountRecordTypeId,
                 FirstName = 'Test' + i,
                 LastName = 'User' + i,
                 PersonEmail = 'test' + i + '@example.com',

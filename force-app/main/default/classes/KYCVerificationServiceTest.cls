@@ -7,8 +7,12 @@ private class KYCVerificationServiceTest {
     
     @TestSetup
     static void setup() {
+        Id personAccountRecordTypeId = Schema.SObjectType.Account.getRecordTypeInfosByDeveloperName()
+            .get('PersonAccount').getRecordTypeId();
+        
         // Create test person account
         Account testAccount = new Account(
+            RecordTypeId = personAccountRecordTypeId,
             FirstName = 'John',
             LastName = 'Doe',
             PersonEmail = 'john.doe@example.com',
@@ -186,10 +190,14 @@ private class KYCVerificationServiceTest {
     
     @IsTest
     static void testVerifyClientsAsyncBulk() {
+        Id personAccountRecordTypeId = Schema.SObjectType.Account.getRecordTypeInfosByDeveloperName()
+            .get('PersonAccount').getRecordTypeId();
+        
         // Create additional accounts
         List<Account> accounts = new List<Account>();
         for (Integer i = 0; i < 3; i++) {
             accounts.add(new Account(
+                RecordTypeId = personAccountRecordTypeId,
                 FirstName = 'Test' + i,
                 LastName = 'User' + i,
                 PersonEmail = 'test' + i + '@example.com',
