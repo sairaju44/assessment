@@ -28,10 +28,9 @@ public with sharing class KYCVerificationService {
         List<Account> accounts = [
             SELECT Id, FirstName, LastName, PersonEmail, 
                    BillingStreet, BillingPostalCode, BillingCountry, BillingCity,
-                   PersonContact.Identification_Type__c, 
-                   PersonContact.Identification_Number__c
+                   Identification_Type__c, Identification_Number__c
             FROM Account
-            WHERE Id = :accountId AND IsPersonAccount = true
+            WHERE Id = :accountId
             WITH SECURITY_ENFORCED
             LIMIT 1
         ];
@@ -87,51 +86,36 @@ public with sharing class KYCVerificationService {
             return;
         }
         
-        Map<Id, Id> accountToContactMap = new Map<Id, Id>();
-        for (Account acc : [SELECT Id, PersonContactId FROM Account WHERE Id IN :accountIds AND IsPersonAccount = true]) {
-            accountToContactMap.put(acc.Id, acc.PersonContactId);
-        }
-        
-        List<Contact> contactsToUpdate = new List<Contact>();
+        List<Account> accountsToUpdate = new List<Account>();
         
         for (Id accountId : accountIds) {
             try {
                 KYCVerificationResponse response = verifyClient(accountId);
-                Id contactId = accountToContactMap.get(accountId);
-                
-                if (contactId == null) {
-                    System.debug(LoggingLevel.WARN, 'No PersonContact found for Account ' + accountId);
-                    continue;
-                }
-                
-                Contact contact = new Contact(Id = contactId);
+                Account acc = new Account(Id = accountId);
                 
                 if (response.isSuccess && response.statusCode == 200) {
-                    contact.KYC_Status__c = 'Verified';
+                    acc.KYC_Status__c = 'Verified';
                 } else {
-                    contact.KYC_Status__c = 'Failed Verification';
+                    acc.KYC_Status__c = 'Failed Verification';
                 }
                 
-                contactsToUpdate.add(contact);
+                accountsToUpdate.add(acc);
                 
             } catch (Exception e) {
                 System.debug(LoggingLevel.ERROR, 'KYC Verification failed for Account ' + accountId + ': ' + e.getMessage());
-                Id contactId = accountToContactMap.get(accountId);
-                if (contactId != null) {
-                    Contact contact = new Contact(Id = contactId);
-                    contact.KYC_Status__c = 'Failed Verification';
-                    contactsToUpdate.add(contact);
-                }
+                Account acc = new Account(Id = accountId);
+                acc.KYC_Status__c = 'Failed Verification';
+                accountsToUpdate.add(acc);
             }
         }
         
-        if (!contactsToUpdate.isEmpty()) {
+        if (!accountsToUpdate.isEmpty()) {
             TriggerHandler.bypass('AccountTriggerHandler');
             
             try {
-                update contactsToUpdate;
+                update accountsToUpdate;
             } catch (DmlException e) {
-                System.debug(LoggingLevel.ERROR, 'Failed to update contacts: ' + e.getMessage());
+                System.debug(LoggingLevel.ERROR, 'Failed to update accounts: ' + e.getMessage());
             } finally {
                 TriggerHandler.clearBypass('AccountTriggerHandler');
             }

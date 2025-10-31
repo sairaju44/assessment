@@ -23,8 +23,8 @@ public class KYCVerificationRequest {
         request.postalCode = account.BillingPostalCode;
         request.country = account.BillingCountry;
         request.city = account.BillingCity;
-        request.identityType = account.PersonContact.Identification_Type__c;
-        request.identityNumber = account.PersonContact.Identification_Number__c;
+        request.identityType = account.Identification_Type__c;
+        request.identityNumber = account.Identification_Number__c;
         return request;
     }
     
